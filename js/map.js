@@ -3,6 +3,7 @@ var ladestasjon = ladestasjon || {};
 ladestasjon.map = (function (maps, print) {
     "use strict";
     var mapCanvas,
+        infowindow,
         zoomConstant = 0.1,
         map;
 
@@ -33,10 +34,10 @@ ladestasjon.map = (function (maps, print) {
         map = new maps.Map(mapCanvas, mapOptions);
 
         function addListener(marker, current) {
-            var infowindow;
             maps.event.addListener(marker, 'click', function (e) {
+                if(infowindow){infowindow.close();}
                 infowindow = new google.maps.InfoWindow({
-                    content: 'test: '
+                    content: current.name
                 });
             infowindow.open(map, marker);
             });
