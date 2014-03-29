@@ -22,6 +22,27 @@ ladestasjon.map = (function (maps, print) {
         return new maps.LatLng(long, lat);
     }
 
+    function GetMyPosition(myPos)
+    {
+        //var oslo = new google.maps.LatLng(long,lat);
+        var browserSupportFlag = new Boolean();
+        var initialLocation;
+
+        if(navigator.geolocation)
+        {
+            browserSupportFlag = true;
+            navigator.geolocation.getCurrentPosition(function(position) {
+                initialLocation = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
+            });
+        }
+        else
+        {
+            browserSupportFlag = false;
+        }
+        myPos = initialLocation;
+        return browserSupportFlag;
+    }
+
     function init() {
         var long = 59.91673,
             lat = 10.74782,
@@ -31,6 +52,26 @@ ladestasjon.map = (function (maps, print) {
                 mapTypeId: maps.MapTypeId.ROADMAP
             };
         map = new maps.Map(mapCanvas, mapOptions);
+
+        var oslo = new google.maps.LatLng(long,lat);
+        if(GetMyPosition(oslo))
+        {
+            //console.log("Pos found);
+            var infowindow = new google.maps.InfoWindow({
+                map: map,
+                position: oslo,
+                content: 'Location found using HTML5.'
+            });
+        }
+        else
+        {
+            console.log("Position not Found - Default position")
+            var infowindow = new google.maps.InfoWindow({
+                map: map,
+                position: oslo,
+                content: 'Location not found - default location.'
+            });
+        }
 
         print.getApiRequest(getLowerBound(long, lat), getUpperBound(long, lat), function (chargerstations) {
             var i;
