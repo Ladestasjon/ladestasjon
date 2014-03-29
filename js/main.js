@@ -1,14 +1,14 @@
 var ladestasjon = ladestasjon || {};
 
 
-ladestasjon.main = (function (maps) {
+ladestasjon.main = (function (maps, print) {
     var $container,
         mapCanvas;
 
     function init() {
         var mapOptions = {
-            center: new maps.LatLng(44.5403, -78.5463),
-            zoom: 8,
+            center: new maps.LatLng(59.91673, 10.74782),
+            zoom: 13,
             mapTypeId: maps.MapTypeId.ROADMAP
         };
         var map = new maps.Map(mapCanvas, mapOptions);
@@ -19,7 +19,7 @@ ladestasjon.main = (function (maps) {
         $container  = container;
         mapCanvas = document.getElementById('map_canvas');
         init();
-        ladestasjon.print.getApiRequest();
+        print.getApiRequest('(59.943921193288915, 10.826683044433594)', '(59.883683240905256, 10.650901794433594)');
     }
 
     return {
