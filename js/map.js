@@ -3,8 +3,8 @@ var ladestasjon = ladestasjon || {};
 ladestasjon.map = (function (maps, print) {
     "use strict";
     var mapCanvas,
-        infowindow,
-        zoomConstant = 0.1,
+        infowindowen,
+        zoomConstant = 50,
         map;
 
     function getUpperBound(long, lat) {
@@ -23,9 +23,39 @@ ladestasjon.map = (function (maps, print) {
         return new maps.LatLng(long, lat);
     }
 
+    function GetMyPosition(myPos) {
+        //var oslo = new google.maps.LatLng(long,lat);
+        var browserSupportFlag,
+            initialLocation;
+
+        if (navigator.geolocation) {
+            browserSupportFlag = true;
+            navigator.geolocation.getCurrentPosition(function (position) {
+                initialLocation = new maps.LatLng(position.coords.latitude, position.coords.longitude);
+            });
+        } else {
+            browserSupportFlag = false;
+        }
+        myPos = initialLocation;
+        return browserSupportFlag;
+    }
+
+    function addListener(marker, current) {
+        maps.event.addListener(marker, 'click', function (e) {
+            if (infowindowen) {
+                infowindowen.close();
+            }
+            infowindowen = new maps.InfoWindow({
+                content: current.name
+            });
+            infowindowen.open(map, marker);
+        });
+    }
+
     function init() {
         var long = 59.91673,
             lat = 10.74782,
+            oslo,
             mapOptions = {
                 center: new maps.LatLng(long, lat),
                 zoom: 13,
@@ -33,34 +63,37 @@ ladestasjon.map = (function (maps, print) {
             };
         map = new maps.Map(mapCanvas, mapOptions);
 
-        function addListener(marker, current) {
-            maps.event.addListener(marker, 'click', function (e) {
-                if(infowindow){infowindow.close();}
-                infowindow = new google.maps.InfoWindow({
-                    content: current.name
-                });
-            infowindow.open(map, marker);
+
+
+        oslo = new maps.LatLng(long, lat);
+        if (GetMyPosition(oslo)) {
+            //console.log("Pos found);
+            var infowindow = new google.maps.InfoWindow({
+                map: map,
+                position: oslo,
+                content: 'Location found using HTML5.'
+            });
+        } else {
+            console.log("Position not Found - Default position");
+            var infowindow = new maps.InfoWindow({
+                map: map,
+                position: oslo,
+                content: 'Location not found - default location.'
             });
         }
 
-
-
-
         print.getApiRequest(getLowerBound(long, lat), getUpperBound(long, lat), function (chargerstations) {
             var i,
-                current,
-                marker;
-
+                marker,
+                current;
             for (i = 0; i < chargerstations.length; i++) {
-                current = chargerstations[i].csmd;
-                //console.log(current);
+                current = chargerstations[i].csmd
                 marker = new maps.Marker({
                     position: getPositionFromString(current.Position),
                     map: map,
                     title: current.name
                 });
                 addListener(marker, current);
-
             }
         });
     }
@@ -68,7 +101,6 @@ ladestasjon.map = (function (maps, print) {
     function main(id) {
         mapCanvas = id;
         init();
-
     }
 
     return {
