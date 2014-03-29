@@ -1,15 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script src="lib/jquery-1.11.0.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/app.css" />
+
+    <script src="lib/jquery-1.11.0.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+
+    <script src="js/main.js"></script>
 </head>
 <body>
+<div class="container">
+    <div id="map_canvas"></div>
+
+</div>
 <script>
     $(document).ready(function () {
-        
+        ladestasjon.main.main($(".container"));
     });
 </script>
 </body>
