@@ -3,7 +3,7 @@ var ladestasjon = ladestasjon || {};
 ladestasjon.map = (function (maps, print) {
     "use strict";
     var mapCanvas,
-        zoomConstant = 0.1,
+        zoomConstant = 50,
         map;
 
     function getUpperBound(long, lat) {
@@ -22,21 +22,17 @@ ladestasjon.map = (function (maps, print) {
         return new maps.LatLng(long, lat);
     }
 
-    function GetMyPosition(myPos)
-    {
+    function GetMyPosition(myPos) {
         //var oslo = new google.maps.LatLng(long,lat);
-        var browserSupportFlag = new Boolean();
-        var initialLocation;
+        var browserSupportFlag,
+            initialLocation;
 
-        if(navigator.geolocation)
-        {
+        if (navigator.geolocation) {
             browserSupportFlag = true;
-            navigator.geolocation.getCurrentPosition(function(position) {
-                initialLocation = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
+            navigator.geolocation.getCurrentPosition(function (position) {
+                initialLocation = new maps.LatLng(position.coords.latitude, position.coords.longitude);
             });
-        }
-        else
-        {
+        } else {
             browserSupportFlag = false;
         }
         myPos = initialLocation;
@@ -46,6 +42,7 @@ ladestasjon.map = (function (maps, print) {
     function init() {
         var long = 59.91673,
             lat = 10.74782,
+            oslo,
             mapOptions = {
                 center: new maps.LatLng(long, lat),
                 zoom: 13,
@@ -53,19 +50,16 @@ ladestasjon.map = (function (maps, print) {
             };
         map = new maps.Map(mapCanvas, mapOptions);
 
-        var oslo = new google.maps.LatLng(long,lat);
-        if(GetMyPosition(oslo))
-        {
+        oslo = new google.maps.LatLng(long, lat);
+        if (GetMyPosition(oslo)) {
             //console.log("Pos found);
             var infowindow = new google.maps.InfoWindow({
                 map: map,
                 position: oslo,
                 content: 'Location found using HTML5.'
             });
-        }
-        else
-        {
-            console.log("Position not Found - Default position")
+        } else {
+            console.log("Position not Found - Default position");
             var infowindow = new google.maps.InfoWindow({
                 map: map,
                 position: oslo,
@@ -88,7 +82,6 @@ ladestasjon.map = (function (maps, print) {
     function main(id) {
         mapCanvas = id;
         init();
-
     }
 
     return {
