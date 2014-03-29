@@ -32,14 +32,34 @@ ladestasjon.map = (function (maps, print) {
             };
         map = new maps.Map(mapCanvas, mapOptions);
 
-        print.getApiRequest(getLowerBound(long, lat), getUpperBound(long, lat), function (chargerstations) {
-            var i;
-            for (i = 0; i < chargerstations.length; i++) {
-                new maps.Marker({
-                    position: getPositionFromString(chargerstations[i].csmd.Position),
-                    map: map,
-                    title: 'Hello World!'
+        function addListener(marker, current) {
+            var infowindow;
+            maps.event.addListener(marker, 'click', function (e) {
+                infowindow = new google.maps.InfoWindow({
+                    content: 'test: '
                 });
+            infowindow.open(map, marker);
+            });
+        }
+
+
+
+
+        print.getApiRequest(getLowerBound(long, lat), getUpperBound(long, lat), function (chargerstations) {
+            var i,
+                current,
+                marker;
+
+            for (i = 0; i < chargerstations.length; i++) {
+                current = chargerstations[i].csmd;
+                //console.log(current);
+                marker = new maps.Marker({
+                    position: getPositionFromString(current.Position),
+                    map: map,
+                    title: current.name
+                });
+                addListener(marker, current);
+
             }
         });
     }
